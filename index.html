@@ -65,16 +65,15 @@
         );
 
         // you can curate via the query string
-        var cmds = [
-            { action: "P", value: true, frame: 01 },
-            { action: "P", value: true, frame: 154 },
-            { action: "P", value: false, frame: 469 },
-            { action: "F", value: false, frame: 552 },
-            { action: "F", value: true, frame: 628 },
-            { action: "A", value: true, frame: 770 },
-            { action: "A", value: true, frame: 819 },
-            { action: "A", value: false, frame: 1079 },
-        ];
+       var cmds = [
+  { action: "P", value: true, frame: "meg" }, // Meg influences the robots
+  { action: "F", value: true, frame: "meg" },
+  { action: "P", value: false, frame: "meg" },
+  { action: "A", value: true, frame: "meg" },
+  { action: "F", value: true, frame: "meg" },
+  { action: "A", value: true, frame: "meg" },
+  { action: "A", value: false, frame: "meg" },
+];
 
         var scale = 3;
         var robotCount = 5; // Adjust the number of frames as needed

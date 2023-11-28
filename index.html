@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Web Page</title>
+    <style>
+        /* Add CSS styles for the grid layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust the column width as needed */
+            gap: 10px; /* Adjust the gap between frames as needed */
+        }
+    </style>
 </head>
 <body>
     <!-- Your HTML content here -->
-    
+
     <!-- Include the JavaScript code within script tags -->
     <script>
         var finishedJobs = [];
         var axoUrl = "https://hosted.ntent.art/projects/axo/index.html";
-        var frameWidth = window.innerWidth / 2; // Adjust the width as needed
-        var frameHeight = window.innerHeight / 2; // Adjust the height as needed
 
         // Count the number of frames you create
         var frameCount = 0;
@@ -21,156 +27,89 @@
         // First we set up an event listener to listen for messages from all iframes
         // This allows us to communicate more effectively, with the name and tokenId
         window.addEventListener(
-          "message",
-          (e) => {
-            // Handle the message
-            if (typeof e.data === "object" && e.data.event == "axoReady") {
-              var iframe = document.getElementById(e.data.value);
-              console.log(
-                `${e.data.value} is ready. Token Id : ${e.data.tokenId}`
-              );
-              iframe.tokenId = e.data.tokenId;
-            }
-          },
-          false
+            "message",
+            (e) => {
+                // Handle the message
+                if (typeof e.data === "object" && e.data.event == "axoReady") {
+                    var iframe = document.getElementById(e.data.value);
+                    console.log(
+                        `${e.data.value} is ready. Token Id : ${e.data.tokenId}`
+                    );
+                    iframe.tokenId = e.data.tokenId;
+                }
+            },
+            false
         );
 
         // You can curate via the query string
         var cmds = [
-          { action: "F", value: true, frame: 87 },
-          { action: "P", value: true, frame: 154 },
-          { action: "P", value: false, frame: 469 },
-          { action: "F", value: false, frame: 552 },
-          { action: "A", value: true, frame: 628 },
-          { action: "F", value: true, frame: 770 },
-          { action: "P", value: true, frame: 819 },
-          { action: "P", value: false, frame: 1079 },
+            { action: "F", value: true, frame: 87 },
+            { action: "P", value: true, frame: 154 },
+            { action: "P", value: false, frame: 469 },
+            { action: "F", value: false, frame: 552 },
+            { action: "A", value: true, frame: 628 },
+            { action: "F", value: true, frame: 770 },
+            { action: "P", value: true, frame: 819 },
+            { action: "P", value: false, frame: 1079 },
         ];
 
         var scale = 5;
-        var olivia = createIframe(
-          "olivia",
-          "Olivia Dunham",
-          axoUrl + "?z=3&w=" +
-            JSON.stringify(cmds),
-          frameWidth,
-          frameHeight,
-          () => {
-            // Or you can post messages directly
-            setTimeout(function () {
-              frame.contentWindow.postMessage(
-                { call: "axoStateChange", value: "d" },
-                "*"
-              );
-              console.log("Disabling Fate");
-            }, 3000);
-            setTimeout(function () {
-              frame.contentWindow.postMessage(
-                { call: "axoStateChange", value: "a" },
-                "*"
-              );
-              console.log("Having Awareness");
-            }, 4000);
-            setTimeout(function () {
-              frame.contentWindow.postMessage(
-                { call: "axoStateChange", value: "f" },
-                "*"
-              );
-              console.log("Freaking Out");
-            }, 5000);
-          }
-        );
-
-        var dick = createIframe(
-          "dick",
-          "Dick Whitman",
-          axoUrl + "?z=" + scale,
-          frameWidth,
-          frameHeight
-        );
-
-        var sebastian = createIframe(
-          "sebastian",
-          "Lil Sebastian",
-          axoUrl + "?z=" + scale,
-          frameWidth,
-          frameHeight
-        );
-
         var robotCount = 5; // Adjust the number of robots as needed
-        var robots = [];
+
+        // Create a grid container to hold the frames
+        var gridContainer = document.createElement("div");
+        gridContainer.classList.add("grid-container");
+        document.body.appendChild(gridContainer);
+
+        createIframe(
+            "olivia",
+            "Olivia Dunham",
+            axoUrl + "?z=3&w=" +
+            JSON.stringify(cmds)
+        );
+
+        createIframe(
+            "dick",
+            "Dick Whitman",
+            axoUrl + "?z=" + scale
+        );
+
+        createIframe(
+            "sebastian",
+            "Lil Sebastian",
+            axoUrl + "?z=" + scale
+        );
+
         for (var i = 0; i < robotCount; i++) {
-          var robot = createIframe(
-            "robot" + (i + 1).toString(),
-            "Robot " + (i + 1),
-            axoUrl + "?z=" + scale,
-            frameWidth,
-            frameHeight
-          );
-          robots.push(robot);
+            createIframe(
+                "robot" + (i + 1).toString(),
+                "Robot " + (i + 1),
+                axoUrl + "?z=" + scale
+            );
         }
 
         // Display the total number of frames created
         console.log(`Total frames created: ${frameCount}`);
 
-        window.addEventListener(
-          "message",
-          (e) => {
-            // Handle the message
-            if (typeof e.data === "object" && e.data.event == "axoStateChange") {
-              console.log(`Axo state change incoming: ${e.data.value}`);
-              if (!finishedJobs.includes(e.data.id)) {
-                finishedJobs.push(e.data.id);
-                robots.forEach((r) => {
-                  if (e.data.tokenId != r.tokenId && e.data.handle == "olivia") {
-                    r.contentWindow.postMessage(
-                      {
-                        event: "axoStateChange",
-                        action: e.data.action,
-                        value: e.data.value,
-                        tokenId: e.data.tokenId,
-                      },
-                      "*"
-                    );
-                    console.log(
-                      `Sent message from ${e.data.handle} to ${r.id} : ${e.data.action} : ${e.data.id}`
-                    );
-                  }
-                });
-              }
-            }
-          },
-          false
-        );
+        function createIframe(id, label, url) {
+            var container = document.createElement("div");
+            container.id = id + "-container";
+            var iframe = document.createElement("iframe");
+            iframe.id = id;
+            iframe.onload = () => {
+                var frame = document.getElementById(id);
+                frame.contentWindow.postMessage({ event: "hello", value: id }, "*");
+            };
+            iframe.src = url;
+            container.appendChild(iframe);
+            var div = document.createElement("div");
+            div.style.textAlign = "center";
+            div.innerHTML = label;
+            container.appendChild(div);
+            gridContainer.appendChild(container);
 
-        function createIframe(id, label, url, width, height, onload = null) {
-          var container = document.createElement("div");
-          container.id = id + "-container";
-          container.style.width = width + "px"; // Add "px" to specify the width correctly
-          container.style.height = height + "px"; // Add "px" to specify the height correctly
-          container.style.float = "left"; // Float frames left for even distribution
-          var iframe = document.createElement("iframe");
-          iframe.id = id;
-          iframe.onload = () => {
-            var frame = document.getElementById(id);
-            frame.contentWindow.postMessage({ event: "hello", value: id }, "*");
-
-            if (onload) onload();
-          };
-          iframe.src = url;
-          iframe.style.width = "100%";
-          iframe.style.height = "100%";
-          container.appendChild(iframe);
-          var div = document.createElement("div");
-          div.style.textAlign = "center";
-          div.innerHTML = label;
-          container.appendChild(div);
-          document.body.appendChild(container);
-
-          // Increment the frame count
-          frameCount++;
-
-          return iframe;
+            // Increment the frame count
+            frameCount++;
         }
     </script>
 </body>

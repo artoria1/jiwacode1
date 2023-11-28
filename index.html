@@ -92,7 +92,7 @@
           200
         );
 
-        var robotCount = 17;
+        var robotCount = 5;
         var robots = [];
         for (var i = 0; i < robotCount; i++) {
           var robot = createIframe(
@@ -149,8 +149,8 @@
             if (onload) onload();
           };
           iframe.src = url;
-          iframe.style.width = width + "px"; // Add "px" to specify the width correctly
-          iframe.style.height = height + "px"; // Add "px" to specify the height correctly
+          iframe.style.width = width + "300"; // Add "px" to specify the width correctly
+          iframe.style.height = height + "300"; // Add "px" to specify the height correctly
           container.appendChild(iframe);
           var div = document.createElement("div");
           div.style.textAlign = "center";

@@ -15,7 +15,7 @@
         .iframe-container {
             position: relative;
             width: 100%;
-            padding-top: 105%; /* 1:1 aspect ratio (100% of width) */
+            padding-top: 110%; /* 1:1 aspect ratio (100% of width) */
         }
 
         .iframe-container iframe {
@@ -45,28 +45,7 @@
     <!-- Include the JavaScript code within script tags -->
     <script>
         var finishedJobs = [];
-        var axoUrls = [
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000149",
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000150",
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000151",
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000152",
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000153",
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000154",
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000155",
-            "https://generator.artblocks.io/0x99a9b7c1116f9ceeb1652de04d5969cce509b069/480000156"
-        ];
-
-        // Names for frames
-        var frameNames = [
-            "Meg the Merciless",
-            "Indy Independent",
-            "Loner Luke",
-            "Meg Follower 1",
-            "Meg Follower 2",
-            "Meg Follower 3",
-            "Meg Follower 4",
-            "Meg Follower 5"
-        ];
+        var axoUrl = "https://hosted.ntent.art/projects/axo/index.html";
 
         // First we set up an event listener to listen for messages from all iframes
         // This allows us to communicate more effectively, with the name and tokenId
@@ -85,7 +64,19 @@
             false
         );
 
-        var scale = 20;
+        // you can curate via the query string
+        var cmds = [
+            { action: "P", value: true, frame: 01 },
+            { action: "P", value: true, frame: 154 },
+            { action: "P", value: false, frame: 469 },
+            { action: "F", value: false, frame: 552 },
+            { action: "F", value: true, frame: 628 },
+            { action: "A", value: true, frame: 770 },
+            { action: "A", value: true, frame: 819 },
+            { action: "A", value: false, frame: 1079 },
+        ];
+
+        var scale = 3;
         var robotCount = 5; // Adjust the number of frames as needed
 
         // Create a grid container to hold the frames
@@ -93,11 +84,30 @@
         gridContainer.classList.add("grid-container");
         document.body.appendChild(gridContainer);
 
-        for (var i = 0; i < axoUrls.length; i++) {
+        createIframe(
+            "meg",
+            "Mad Meg",
+            axoUrl + "?z=3&w=" +
+            JSON.stringify(cmds)
+        );
+
+        createIframe(
+            "indy",
+            "Indy Independant",
+            axoUrl + "?z=" + scale
+        );
+
+        createIframe(
+            "luke",
+            "Loner Luke",
+            axoUrl + "?z=" + scale
+        );
+
+        for (var i = 0; i < robotCount; i++) {
             createIframe(
-                "frame" + (i + 1),
-                frameNames[i],
-                axoUrls[i]
+                "robot" + (i + 1).toString(),
+                "Meg Follower " + (i + 1),
+                axoUrl + "?z=" + scale
             );
         }
 
@@ -109,6 +119,24 @@
             iframe.onload = () => {
                 var frame = document.getElementById(id);
                 frame.contentWindow.postMessage({ event: "hello", value: id }, "*");
+
+                // Forward keypress events to the robot frames
+                iframe.contentWindow.addEventListener("keydown", (event) => {
+                    var key = event.key;
+                    if (key === "p" || key === "f" || key === "a") {
+                        // Send state change command to robots
+                        for (var i = 0; i < robotCount; i++) {
+                            var robotIframe = document.getElementById("robot" + (i + 1).toString());
+                            robotIframe.contentWindow.postMessage({
+                                event: "axoStateChange",
+                                action: key,
+                                value: true,
+                                tokenId: robotIframe.tokenId,
+                            }, "*");
+                            console.log(`Sent command to ${robotIframe.id}: ${key}`);
+                        }
+                    }
+                });
             };
             iframe.src = url;
             container.appendChild(iframe);

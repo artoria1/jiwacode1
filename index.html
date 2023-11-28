@@ -12,9 +12,14 @@
     <script>
         var finishedJobs = [];
         var axoUrl = "https://hosted.ntent.art/projects/axo/index.html";
+        var frameWidth = window.innerWidth / 2; // Adjust the width as needed
+        var frameHeight = window.innerHeight / 2; // Adjust the height as needed
 
-        //First we set up an event listener to listen for messages from all iframes
-        //This allows us to communicate with more effectively, with the name and tokenId
+        // Count the number of frames you create
+        var frameCount = 0;
+
+        // First we set up an event listener to listen for messages from all iframes
+        // This allows us to communicate more effectively, with the name and tokenId
         window.addEventListener(
           "message",
           (e) => {
@@ -30,7 +35,7 @@
           false
         );
 
-        //you can curate via the query string
+        // You can curate via the query string
         var cmds = [
           { action: "F", value: true, frame: 87 },
           { action: "P", value: true, frame: 154 },
@@ -48,10 +53,10 @@
           "Olivia Dunham",
           axoUrl + "?z=3&w=" +
             JSON.stringify(cmds),
-          200,
-          200,
+          frameWidth,
+          frameHeight,
           () => {
-            //or you can post messages directly
+            // Or you can post messages directly
             setTimeout(function () {
               frame.contentWindow.postMessage(
                 { call: "axoStateChange", value: "d" },
@@ -80,30 +85,33 @@
           "dick",
           "Dick Whitman",
           axoUrl + "?z=" + scale,
-          200,
-          200
+          frameWidth,
+          frameHeight
         );
 
         var sebastian = createIframe(
           "sebastian",
           "Lil Sebastian",
           axoUrl + "?z=" + scale,
-          200,
-          200
+          frameWidth,
+          frameHeight
         );
 
-        var robotCount = 5;
+        var robotCount = 5; // Adjust the number of robots as needed
         var robots = [];
         for (var i = 0; i < robotCount; i++) {
           var robot = createIframe(
             "robot" + (i + 1).toString(),
             "Robot " + (i + 1),
             axoUrl + "?z=" + scale,
-            200,
-            200
+            frameWidth,
+            frameHeight
           );
           robots.push(robot);
         }
+
+        // Display the total number of frames created
+        console.log(`Total frames created: ${frameCount}`);
 
         window.addEventListener(
           "message",
@@ -139,7 +147,8 @@
           var container = document.createElement("div");
           container.id = id + "-container";
           container.style.width = width + "px"; // Add "px" to specify the width correctly
-          container.style.display = "inline-block";
+          container.style.height = height + "px"; // Add "px" to specify the height correctly
+          container.style.float = "left"; // Float frames left for even distribution
           var iframe = document.createElement("iframe");
           iframe.id = id;
           iframe.onload = () => {
@@ -149,14 +158,17 @@
             if (onload) onload();
           };
           iframe.src = url;
-          iframe.style.width = width + "300"; // Add "px" to specify the width correctly
-          iframe.style.height = height + "300"; // Add "px" to specify the height correctly
+          iframe.style.width = "100%";
+          iframe.style.height = "100%";
           container.appendChild(iframe);
           var div = document.createElement("div");
           div.style.textAlign = "center";
           div.innerHTML = label;
           container.appendChild(div);
           document.body.appendChild(container);
+
+          // Increment the frame count
+          frameCount++;
 
           return iframe;
         }

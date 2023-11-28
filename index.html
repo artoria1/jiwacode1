@@ -93,7 +93,7 @@
 
         createIframe(
             "indy",
-            "Indy Independent",
+            "Indy Independant",
             axoUrl + "?z=" + scale
         );
 
@@ -106,7 +106,7 @@
         for (var i = 0; i < robotCount; i++) {
             createIframe(
                 "robot" + (i + 1).toString(),
-                "Meg Follower " + (i + 1), // Change robot names here
+                "Meg Follower " + (i + 1),
                 axoUrl + "?z=" + scale
             );
         }
@@ -133,6 +133,7 @@
                                 value: true,
                                 tokenId: robotIframe.tokenId,
                             }, "*");
+                            console.log(`Sent command to ${robotIframe.id}: ${key}`);
                         }
                     }
                 });

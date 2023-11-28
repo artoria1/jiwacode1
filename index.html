@@ -123,7 +123,7 @@
                 // Forward keypress events to the robot frames
                 iframe.contentWindow.addEventListener("keydown", (event) => {
                     var key = event.key;
-                    if (key === "p" || key === "f" || key === "a") {
+                    if (key === "p" || key === "f" || key === "a" || key === "c") {
                         // Send state change command to robots
                         for (var i = 0; i < robotCount; i++) {
                             var robotIframe = document.getElementById("robot" + (i + 1).toString());

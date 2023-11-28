@@ -119,16 +119,6 @@
             iframe.onload = () => {
                 var frame = document.getElementById(id);
                 frame.contentWindow.postMessage({ event: "hello", value: id }, "*");
-
-                // Add event listener to the Meg frame to send state change commands
-                if (id === "meg") {
-                    window.addEventListener("keydown", (e) => {
-                        // Check for P, F, and A key presses
-                        if (e.key === "p" || e.key === "f" || e.key === "a") {
-                            frame.contentWindow.postMessage({ call: "axoStateChange", value: e.key }, "*");
-                        }
-                    });
-                }
             };
             iframe.src = url;
             container.appendChild(iframe);
@@ -141,6 +131,24 @@
 
             gridContainer.appendChild(container);
         }
+
+        // Event listener for Meg's frame to control robot behavior
+        var megIframe = document.getElementById("meg");
+        megIframe.contentWindow.addEventListener("keydown", (event) => {
+            var key = event.key;
+            if (key === "p" || key === "f" || key === "a") {
+                // Send state change command to robots
+                for (var i = 0; i < robotCount; i++) {
+                    var robotIframe = document.getElementById("robot" + (i + 1));
+                    robotIframe.contentWindow.postMessage({
+                        event: "axoStateChange",
+                        action: key,
+                        value: true,
+                        tokenId: robotIframe.tokenId,
+                    }, "*");
+                }
+            }
+        });
     </script>
 </body>
 </html>

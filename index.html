@@ -24,21 +24,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0; /* Ensure frames are behind labels */
         }
 
         .frame-label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1; /* Ensure labels are in front of frames */
-            font-weight: bold; /* Add bold font for labels */
-            background-color: rgba(255, 255, 255, 0.8); /* Add background color to labels for readability */
+            text-align: center;
+            font-size: 12px; /* Adjust font size as needed */
         }
     </style>
 </head>
@@ -129,7 +119,7 @@
             // Add frame label
             var labelDiv = document.createElement("div");
             labelDiv.classList.add("frame-label");
-            labelDiv.innerHTML = label;
+            labelDiv.textContent = label;
             container.appendChild(labelDiv);
 
             gridContainer.appendChild(container);
